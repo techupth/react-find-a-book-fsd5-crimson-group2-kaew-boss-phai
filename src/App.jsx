@@ -3,21 +3,21 @@ import "./App.css";
 import { useEffect, useState } from "react";
 
 function App() {
-  const [searchText, setSearchText] = useState(0);
   const [books, setBooks] = useState([]);
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
-    searchBook();
+    if (searchText) {
+      searchBook(searchText);
+    }
   }, [searchText]);
 
-  const searchBook = async () => {
+  const searchBook = async function (text) {
     try {
       const result = await axios.get(
-        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-          searchText
-        )}`
+        `https://www.googleapis.com/books/v1/volumes?q=${text}`
       );
-      setBooks(result.data.items || []);
+      setBooks(result.data.items);
     } catch (error) {
       console.error("Error searching books:", error);
     }
@@ -31,9 +31,9 @@ function App() {
       <label htmlFor="search-text">search:</label>
       <input id="search-text" type="text" onChange={handleSearchTextChange} />
       <div>
-        {books.map((book) => (
-          <div key={book.id}>
-            <h2>{book.volumeInfo.title}</h2>
+        {books.map((book, index) => (
+          <div key={index}>
+            <li>{book.volumeInfo.title}</li>
           </div>
         ))}
       </div>
